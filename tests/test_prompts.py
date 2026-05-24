@@ -12,4 +12,4 @@ def test_prompt_writer_forbids_cliches_and_requires_visual_elements():
 def test_critic_enforces_strict_scoring():
     assert "5" in CRITIC_SYSTEM
     assert "9" in CRITIC_SYSTEM
-    assert "actionable" in CRITIC_SYSTEM.lower()
+    assert "specific improvements" in CRITIC_SYSTEM.lower()
