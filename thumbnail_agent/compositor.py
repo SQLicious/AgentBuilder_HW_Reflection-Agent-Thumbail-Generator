@@ -26,14 +26,21 @@ def composite_logos(image_path: str, brand_elements: list[str]) -> None:
     logo_h = int(h * _LOGO_H_RATIO)
     padding = int(h * _PADDING_RATIO)
 
+    max_logo_w = int(w * 0.35)  # wide wordmarks must not overflow
     x_cursor = w - padding
     for logo_path in reversed(resolved):
         logo = Image.open(logo_path).convert("RGBA")
         scale = logo_h / logo.height
         new_w = max(1, int(logo.width * scale))
-        logo = logo.resize((new_w, logo_h), Image.LANCZOS)
+        if new_w > max_logo_w:
+            scale = max_logo_w / logo.width
+            new_w = max_logo_w
+            logo_h_actual = max(1, int(logo.height * scale))
+        else:
+            logo_h_actual = logo_h
+        logo = logo.resize((new_w, logo_h_actual), Image.LANCZOS)
         x = x_cursor - logo.width
-        y = h - logo_h - padding
+        y = h - logo_h_actual - padding
         base.paste(logo, (x, y), logo)
         x_cursor = x - padding
 

@@ -45,7 +45,7 @@ Return a JSON object with exactly these fields:
   visual_story        — one sentence describing the dramatic story in the thumbnail
   dominant_subject    — the largest, most attention-grabbing subject
   secondary_subject   — second visual subject, or null
-  brand_elements      — logo asset filenames to composite after generation. Choose from: claude.png, openai.png, gemini.png, cursor.png, perplexity.png, copilot.png, grok.png. Use [] if none apply. Do NOT ask the image model to generate these logos.
+  brand_elements      — logo asset filenames to composite after generation. Choose from: claude.png (Claude icon), claude-code.png (Claude Code wordmark — use when topic is specifically about Claude Code), openai.png, gemini.png, cursor.png, perplexity.png, copilot.png, grok.png. Use [] if none apply. Do NOT ask the image model to generate these logos.
   visual_conflict     — the tension in the image, e.g. human vs AI, Claude vs OpenAI, beginner vs expert
   composition         — specific layout, e.g. huge face left, giant Claude logo right, diagonal split
   scale_relationship  — how subject sizes create drama, e.g. Claude logo 5x larger than human
