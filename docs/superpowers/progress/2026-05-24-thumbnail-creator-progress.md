@@ -24,14 +24,14 @@
 | 1 | `__init__.py` + `state.py` + `tests/test_state.py` | ✅ complete | `0083dc5` | 2 tests pass |
 | 2 | `prompts.py` + `tests/test_prompts.py` | ✅ complete | `21daea8` | 2 tests pass |
 | 3 | `tools.py` + `tests/test_tools.py` | ✅ complete | `6bf9c6a` | 2 tests pass |
-| 4 | `nodes.py` skeleton + `should_continue` + `CritiqueOutput` | ⏳ pending | — | Session 2 |
-| 5 | `nodes.py` — `web_search` + `prompt_writer` | ⏳ pending | — | Session 2 |
-| 6 | `nodes.py` — `generator` | ⏳ pending | — | Session 2 |
-| 7 | `nodes.py` — `critic` | ⏳ pending | — | Session 2 |
-| 8 | `nodes.py` — `saver` | ⏳ pending | — | Session 2 |
-| 9 | `graph.py` | ⏳ pending | — | Session 2 |
-| 10 | `main.py` + `make_diagram.py` | ⏳ pending | — | Session 2 |
-| 11 | Generate `graph.png` + end-to-end run | ⏳ pending | — | Session 2 |
+| 4 | `nodes.py` skeleton + `should_continue` + `CritiqueOutput` | ✅ complete | `e2281c0` | 4 tests pass |
+| 5 | `nodes.py` — `web_search` + `prompt_writer` | ✅ complete | `56a6a76` | 3 tests pass |
+| 6 | `nodes.py` — `generator` | ✅ complete | `2d1e322` | 1 test pass |
+| 7 | `nodes.py` — `critic` | ✅ complete | `8c5c0a4` | 1 test pass |
+| 8 | `nodes.py` — `saver` | ✅ complete | `3a3ce71` | 19 total tests pass |
+| 9 | `graph.py` | ✅ complete | `69dbe8c` | 3 tests pass |
+| 10 | `main.py` + `make_diagram.py` | ✅ complete | `6bc126d` | imports OK |
+| 11 | Generate `graph.png` + end-to-end run | ✅ complete | `a7e7eaf` | loop fired (iter 2 = 9/10) |
 
 ---
 
@@ -57,18 +57,9 @@
 
 ---
 
-## Session 2 Handoff
+## Session 2 Complete
 
-> Session 1 complete. 6/6 tests passing on main.
-
-**Resume from:** Task 4  
-**Plan section:** `## Task 4: nodes.py — skeleton + should_continue + CritiqueOutput`  
-**Prereqs:** Tasks 1, 2, 3 must be ✅ complete before starting Task 4.  
-**Command to verify prereqs:**
-```bash
-uv run pytest tests/ -v
-```
-Expected: All tests in `test_state.py`, `test_prompts.py`, `test_tools.py` passing.
+> All 11 tasks done. 19/19 tests passing. Loop fired (iter 2 scored 9/10). Sample run committed for grading.
 
 ---
 
