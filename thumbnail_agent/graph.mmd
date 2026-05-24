@@ -1,0 +1,37 @@
+---
+config:
+  flowchart:
+    curve: linear
+---
+graph TD;
+	__start__([<p>__start__</p>]):::first
+	web_search(web_search)
+	strategy(strategy)
+	prompt_writer(prompt_writer)
+	generator(generator)
+	critic(critic)
+	saver(saver)
+	__end__([<p>__end__</p>]):::last
+	__start__ --> web_search;
+	critic -.-> prompt_writer;
+	critic -.-> saver;
+	generator --> critic;
+	prompt_writer --> generator;
+	strategy --> prompt_writer;
+	web_search --> strategy;
+	saver --> __end__;
+	classDef default fill:#f2f0ff,line-height:1.2
+	classDef first fill-opacity:0
+	classDef last fill:#bfb6fc
+    classDef node_web_search fill:#4A90D9,color:#fff,stroke:none
+    class web_search node_web_search;
+    classDef node_strategy fill:#9B59B6,color:#fff,stroke:none
+    class strategy node_strategy;
+    classDef node_prompt_writer fill:#16A085,color:#fff,stroke:none
+    class prompt_writer node_prompt_writer;
+    classDef node_generator fill:#E67E22,color:#fff,stroke:none
+    class generator node_generator;
+    classDef node_critic fill:#E74C3C,color:#fff,stroke:none
+    class critic node_critic;
+    classDef node_saver fill:#27AE60,color:#fff,stroke:none
+    class saver node_saver;
