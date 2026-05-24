@@ -1,4 +1,5 @@
 import base64
+import json
 import shutil
 from pathlib import Path
 
@@ -7,9 +8,17 @@ from langchain_openai import ChatOpenAI
 from openai import OpenAI
 from pydantic import BaseModel
 
+from .compositor import composite_logos
 from .prompts import CRITIC_SYSTEM, PROMPT_WRITER_SYSTEM, STRATEGY_SYSTEM
 from .state import ThumbnailState
 from .tools import search_topic
+
+
+def _brand_elements(strategy_str: str) -> list[str]:
+    try:
+        return json.loads(strategy_str).get("brand_elements", [])
+    except (json.JSONDecodeError, AttributeError, TypeError):
+        return []
 
 
 class CritiqueOutput(BaseModel):
@@ -77,6 +86,8 @@ def generator(state: ThumbnailState) -> dict:
     img_bytes = base64.b64decode(response.data[0].b64_json)
     image_path = output_dir / f"iter_{iteration}.png"
     image_path.write_bytes(img_bytes)
+
+    composite_logos(str(image_path), _brand_elements(state.get("strategy", "")))
 
     return {"iteration": iteration, "image_path": str(image_path)}
 
