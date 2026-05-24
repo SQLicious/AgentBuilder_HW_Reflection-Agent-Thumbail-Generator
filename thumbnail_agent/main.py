@@ -34,7 +34,7 @@ def run(topic: str, stream: bool, target_rating: int, max_iterations: int) -> No
         console = Console()
         for chunk in graph.stream(initial_state):
             node_name = next(iter(chunk))
-            console.print(f"[bold green]→ {node_name}[/bold green]")
+            console.print(f"[bold green]>> {node_name}[/bold green]")
     else:
         graph.invoke(initial_state)
 
