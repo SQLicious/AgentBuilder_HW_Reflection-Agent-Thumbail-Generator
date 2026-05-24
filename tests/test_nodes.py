@@ -5,6 +5,7 @@ def _base_state(**kwargs):
     return {
         "topic": "Python AI",
         "search_summary": "",
+        "strategy": "",
         "current_prompt": "",
         "image_path": "",
         "rating": 0,
@@ -31,13 +32,44 @@ def test_web_search_writes_summary():
     assert "Python visual trends content." in result["search_summary"]
 
 
+def test_strategy_writes_strategy():
+    mock_llm = MagicMock()
+    mock_llm.invoke.return_value = MagicMock(content='{"main_subject": "Python logo", "emotion": "curiosity"}')
+    with patch("thumbnail_agent.nodes.ChatOpenAI", return_value=mock_llm):
+        from thumbnail_agent.nodes import strategy
+        result = strategy(_base_state(search_summary="Python hooks.\n\nVisual trends."))
+    assert "strategy" in result
+    assert "Python logo" in result["strategy"]
+
+
 def test_prompt_writer_first_iteration():
     mock_llm = MagicMock()
     mock_llm.invoke.return_value = MagicMock(content="A bold thumbnail prompt.")
     with patch("thumbnail_agent.nodes.ChatOpenAI", return_value=mock_llm):
         from thumbnail_agent.nodes import prompt_writer
-        result = prompt_writer(_base_state(search_summary="Python is great."))
+        result = prompt_writer(_base_state(strategy='{"main_subject": "Python snake"}'))
     assert result == {"current_prompt": "A bold thumbnail prompt."}
+
+
+def test_prompt_writer_uses_history_on_revision():
+    mock_llm = MagicMock()
+    mock_llm.invoke.return_value = MagicMock(content="Revised prompt.")
+    with patch("thumbnail_agent.nodes.ChatOpenAI", return_value=mock_llm):
+        from thumbnail_agent.nodes import prompt_writer
+        state = _base_state(
+            strategy='{"main_subject": "Python snake"}',
+            critique="Text too small, no focal subject.",
+            iteration=1,
+            history=[{"iteration": 1, "rating": 6, "critique": "Text too small, no focal subject.",
+                       "prompt": "old prompt", "image_path": "iter_1.png"}],
+        )
+        result = prompt_writer(state)
+
+    messages = mock_llm.invoke.call_args[0][0]
+    human_content = messages[1].content
+    assert "Text too small" in human_content
+    assert "Critique history" in human_content
+    assert result == {"current_prompt": "Revised prompt."}
 
 
 def test_prompt_writer_includes_critique_on_revision():
@@ -46,7 +78,7 @@ def test_prompt_writer_includes_critique_on_revision():
     with patch("thumbnail_agent.nodes.ChatOpenAI", return_value=mock_llm):
         from thumbnail_agent.nodes import prompt_writer
         state = _base_state(
-            search_summary="Python is great.",
+            strategy='{"main_subject": "Python snake"}',
             critique="Text too small, no focal subject.",
             iteration=1,
         )

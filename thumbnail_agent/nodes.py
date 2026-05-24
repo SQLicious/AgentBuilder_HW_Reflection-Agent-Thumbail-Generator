@@ -7,7 +7,7 @@ from langchain_openai import ChatOpenAI
 from openai import OpenAI
 from pydantic import BaseModel
 
-from .prompts import CRITIC_SYSTEM, PROMPT_WRITER_SYSTEM
+from .prompts import CRITIC_SYSTEM, PROMPT_WRITER_SYSTEM, STRATEGY_SYSTEM
 from .state import ThumbnailState
 from .tools import search_topic
 
@@ -32,13 +32,29 @@ def web_search(state: ThumbnailState) -> dict:
     return {"search_summary": summary}
 
 
+def strategy(state: ThumbnailState) -> dict:
+    llm = ChatOpenAI(model="gpt-4o")
+    response = llm.invoke([
+        SystemMessage(content=STRATEGY_SYSTEM),
+        HumanMessage(content=f"Topic: {state['topic']}\n\nResearch:\n{state['search_summary']}"),
+    ])
+    return {"strategy": response.content}
+
+
 def prompt_writer(state: ThumbnailState) -> dict:
     llm = ChatOpenAI(model="gpt-4o")
-    user_content = f"Topic: {state['topic']}\n\nWeb research:\n{state['search_summary']}"
-    if state.get("critique"):
-        user_content += (
-            f"\n\nPrevious critique (address every point):\n{state['critique']}"
+    user_content = f"Topic: {state['topic']}\n\nThumbnail Strategy:\n{state['strategy']}"
+    history = state.get("history", [])
+    if history:
+        history_text = "\n\n".join(
+            f"Iteration {h['iteration']} (score {h['rating']}/10):\n{h['critique']}"
+            for h in history
         )
+        user_content += (
+            f"\n\nCritique history — address ALL issues from the latest entry:\n{history_text}"
+        )
+    elif state.get("critique"):
+        user_content += f"\n\nPrevious critique (address every point):\n{state['critique']}"
     response = llm.invoke([
         SystemMessage(content=PROMPT_WRITER_SYSTEM),
         HumanMessage(content=user_content),

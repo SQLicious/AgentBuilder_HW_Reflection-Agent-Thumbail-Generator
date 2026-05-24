@@ -16,6 +16,7 @@ def run(topic: str, stream: bool, target_rating: int, max_iterations: int) -> No
     initial_state = {
         "topic": topic,
         "search_summary": "",
+        "strategy": "",
         "current_prompt": "",
         "image_path": "",
         "rating": 0,

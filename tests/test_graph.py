@@ -6,10 +6,10 @@ def test_graph_compiles():
     assert graph is not None
 
 
-def test_graph_has_all_five_nodes():
+def test_graph_has_all_required_nodes():
     graph = build_graph()
     node_names = set(graph.get_graph().nodes.keys())
-    assert {"web_search", "prompt_writer", "generator", "critic", "saver"}.issubset(node_names)
+    assert {"web_search", "strategy", "prompt_writer", "generator", "critic", "saver"}.issubset(node_names)
 
 
 def test_graph_has_conditional_edge_from_critic():

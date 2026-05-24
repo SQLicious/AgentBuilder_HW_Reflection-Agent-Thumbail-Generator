@@ -15,6 +15,7 @@ def test_state_fields_exist():
     state: ThumbnailState = {
         "topic": "test",
         "search_summary": "",
+        "strategy": "",
         "current_prompt": "",
         "image_path": "",
         "rating": 0,

@@ -7,6 +7,7 @@ from typing_extensions import TypedDict
 class ThumbnailState(TypedDict):
     topic: str
     search_summary: str
+    strategy: str
     current_prompt: str
     image_path: str
     rating: int
