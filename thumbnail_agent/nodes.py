@@ -26,7 +26,9 @@ def should_continue(state: ThumbnailState) -> str:
 
 
 def web_search(state: ThumbnailState) -> dict:
-    summary = search_topic(state["topic"])
+    hooks = search_topic(f"{state['topic']} viral YouTube hooks most clicked")
+    visuals = search_topic(f"{state['topic']} YouTube thumbnail visual trends")
+    summary = f"HOOKS & ANGLES:\n{hooks}\n\nVISUAL TRENDS:\n{visuals}"
     return {"search_summary": summary}
 
 

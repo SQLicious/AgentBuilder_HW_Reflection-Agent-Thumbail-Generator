@@ -19,10 +19,16 @@ def _base_state(**kwargs):
 
 
 def test_web_search_writes_summary():
-    with patch("thumbnail_agent.nodes.search_topic", return_value="Python is great for AI."):
+    with patch("thumbnail_agent.nodes.search_topic", side_effect=[
+        "Python hooks content.",
+        "Python visual trends content.",
+    ]):
         from thumbnail_agent.nodes import web_search
         result = web_search(_base_state())
-    assert result == {"search_summary": "Python is great for AI."}
+    assert "HOOKS & ANGLES:" in result["search_summary"]
+    assert "VISUAL TRENDS:" in result["search_summary"]
+    assert "Python hooks content." in result["search_summary"]
+    assert "Python visual trends content." in result["search_summary"]
 
 
 def test_prompt_writer_first_iteration():
