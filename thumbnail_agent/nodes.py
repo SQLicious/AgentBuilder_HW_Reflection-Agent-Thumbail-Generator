@@ -26,11 +26,22 @@ def should_continue(state: ThumbnailState) -> str:
 
 
 def web_search(state: ThumbnailState) -> dict:
-    raise NotImplementedError
+    summary = search_topic(state["topic"])
+    return {"search_summary": summary}
 
 
 def prompt_writer(state: ThumbnailState) -> dict:
-    raise NotImplementedError
+    llm = ChatOpenAI(model="gpt-4o")
+    user_content = f"Topic: {state['topic']}\n\nWeb research:\n{state['search_summary']}"
+    if state.get("critique"):
+        user_content += (
+            f"\n\nPrevious critique (address every point):\n{state['critique']}"
+        )
+    response = llm.invoke([
+        SystemMessage(content=PROMPT_WRITER_SYSTEM),
+        HumanMessage(content=user_content),
+    ])
+    return {"current_prompt": response.content}
 
 
 def generator(state: ThumbnailState) -> dict:
