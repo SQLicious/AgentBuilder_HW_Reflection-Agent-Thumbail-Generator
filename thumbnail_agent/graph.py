@@ -5,6 +5,15 @@ from .state import ThumbnailState
 
 
 def build_graph():
+    """Build and compile the thumbnail-generation LangGraph state machine.
+
+    Wires nodes in a fixed pipeline (web_search → strategy → prompt_writer →
+    generator → critic) with a conditional edge from critic back to
+    prompt_writer for revision loops, or forward to saver when done.
+
+    Returns:
+        CompiledGraph: Ready-to-invoke or ready-to-stream LangGraph instance.
+    """
     builder = StateGraph(ThumbnailState)
 
     builder.add_node("web_search", web_search)

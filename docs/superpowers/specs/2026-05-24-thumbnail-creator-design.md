@@ -7,7 +7,8 @@
 
 ## Overview
 
-A LangGraph state machine that takes a video topic, generates a YouTube thumbnail via gpt-image-1, critiques it with GPT-4o vision, and loops until the rating meets a target or an iteration cap is hit. Outputs `final.png` + `report.md` per run.
+A LangGraph agent that designs YouTube thumbnails through iterative self-criticism.
+Hand it a video topic → it searches the web → builds a visual strategy → generates an image → critiques it → loops until the score is good enough → saves the best result.
 
 ---
 

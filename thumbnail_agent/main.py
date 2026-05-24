@@ -6,10 +6,19 @@ from .graph import build_graph
 
 
 def _slugify(text: str) -> str:
+    """Convert text to a lowercase alphanumeric slug (max 40 chars) for use in directory names."""
     return "".join(c if c.isalnum() else "_" for c in text.lower())[:40]
 
 
 def run(topic: str, stream: bool, target_rating: int, max_iterations: int) -> None:
+    """Execute the thumbnail agent for the given topic.
+
+    Args:
+        topic: The YouTube video topic to generate a thumbnail for.
+        stream: If True, print each node name as the graph executes.
+        target_rating: Critic score (1-10) required to accept the thumbnail.
+        max_iterations: Maximum prompt-revision loops before forcing save.
+    """
     ts = datetime.now().strftime("%Y%m%d_%H%M%S")
     output_dir = str(Path("outputs") / f"{ts}_{_slugify(topic)}")
 
@@ -43,6 +52,7 @@ def run(topic: str, stream: bool, target_rating: int, max_iterations: int) -> No
 
 
 def main() -> None:
+    """Parse CLI arguments and invoke the thumbnail agent."""
     parser = argparse.ArgumentParser(description="YouTube Thumbnail Designer Agent")
     parser.add_argument("topic", help="Video topic")
     parser.add_argument("--stream", action="store_true", help="Stream node updates live")
