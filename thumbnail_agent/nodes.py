@@ -45,7 +45,22 @@ def prompt_writer(state: ThumbnailState) -> dict:
 
 
 def generator(state: ThumbnailState) -> dict:
-    raise NotImplementedError
+    client = OpenAI()
+    iteration = state["iteration"] + 1
+    output_dir = Path(state["output_dir"])
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    response = client.images.generate(
+        model="gpt-image-1",
+        prompt=state["current_prompt"],
+        size="1536x1024",
+        n=1,
+    )
+    img_bytes = base64.b64decode(response.data[0].b64_json)
+    image_path = output_dir / f"iter_{iteration}.png"
+    image_path.write_bytes(img_bytes)
+
+    return {"iteration": iteration, "image_path": str(image_path)}
 
 
 def critic(state: ThumbnailState) -> dict:
