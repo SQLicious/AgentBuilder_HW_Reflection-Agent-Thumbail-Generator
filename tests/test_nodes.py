@@ -82,3 +82,34 @@ def test_generator_saves_png_and_increments_iteration(tmp_path):
         size="1536x1024",
         n=1,
     )
+
+
+def test_critic_returns_rating_critique_and_appends_history(tmp_path):
+    fake_png = tmp_path / "iter_1.png"
+    fake_png.write_bytes(b"fakepng")
+
+    mock_structured = MagicMock()
+    mock_structured.invoke.return_value = MagicMock(rating=6, critique="Text too small.")
+
+    mock_llm = MagicMock()
+    mock_llm.with_structured_output.return_value = mock_structured
+
+    with patch("thumbnail_agent.nodes.ChatOpenAI", return_value=mock_llm):
+        from thumbnail_agent.nodes import critic, CritiqueOutput
+        state = _base_state(
+            topic="Python AI",
+            current_prompt="Bold Python thumbnail.",
+            image_path=str(fake_png),
+            iteration=1,
+        )
+        result = critic(state)
+
+    assert result["rating"] == 6
+    assert result["critique"] == "Text too small."
+    assert len(result["history"]) == 1
+    entry = result["history"][0]
+    assert entry["iteration"] == 1
+    assert entry["rating"] == 6
+    assert entry["prompt"] == "Bold Python thumbnail."
+    assert entry["image_path"] == str(fake_png)
+    mock_llm.with_structured_output.assert_called_once_with(CritiqueOutput)

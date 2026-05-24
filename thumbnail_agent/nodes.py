@@ -64,7 +64,33 @@ def generator(state: ThumbnailState) -> dict:
 
 
 def critic(state: ThumbnailState) -> dict:
-    raise NotImplementedError
+    llm = ChatOpenAI(model="gpt-4o").with_structured_output(CritiqueOutput)
+    img_b64 = base64.b64encode(Path(state["image_path"]).read_bytes()).decode()
+    response = llm.invoke([
+        SystemMessage(content=CRITIC_SYSTEM),
+        HumanMessage(content=[
+            {
+                "type": "text",
+                "text": f"Rate this YouTube thumbnail for the topic: {state['topic']}",
+            },
+            {
+                "type": "image_url",
+                "image_url": {"url": f"data:image/png;base64,{img_b64}"},
+            },
+        ]),
+    ])
+    entry = {
+        "iteration": state["iteration"],
+        "prompt": state["current_prompt"],
+        "image_path": state["image_path"],
+        "rating": response.rating,
+        "critique": response.critique,
+    }
+    return {
+        "rating": response.rating,
+        "critique": response.critique,
+        "history": [entry],
+    }
 
 
 def saver(state: ThumbnailState) -> dict:
