@@ -94,4 +94,29 @@ def critic(state: ThumbnailState) -> dict:
 
 
 def saver(state: ThumbnailState) -> dict:
-    raise NotImplementedError
+    history = state["history"]
+    best = max(history, key=lambda x: x["rating"])
+    output_dir = Path(state["output_dir"])
+
+    shutil.copy(best["image_path"], output_dir / "final.png")
+
+    lines = [
+        f"# Thumbnail Report: {state['topic']}\n\n",
+        f"**Best score:** {best['rating']}/10  \n",
+        f"**Total iterations:** {len(history)}\n\n",
+        "## Summary\n\n",
+        "| Iter | Score | Critique |\n",
+        "|------|-------|----------|\n",
+    ]
+    for h in history:
+        short = h["critique"][:120].replace("|", "\\|")
+        lines.append(f"| {h['iteration']} | {h['rating']}/10 | {short} |\n")
+
+    lines.append("\n## Full Iteration Details\n")
+    for h in history:
+        lines.append(f"\n### Iteration {h['iteration']} — Score {h['rating']}/10\n\n")
+        lines.append(f"**Prompt:**\n\n{h['prompt']}\n\n")
+        lines.append(f"**Critique:** {h['critique']}\n")
+
+    (output_dir / "report.md").write_text("".join(lines), encoding="utf-8")
+    return {}

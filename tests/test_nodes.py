@@ -113,3 +113,48 @@ def test_critic_returns_rating_critique_and_appends_history(tmp_path):
     assert entry["prompt"] == "Bold Python thumbnail."
     assert entry["image_path"] == str(fake_png)
     mock_llm.with_structured_output.assert_called_once_with(CritiqueOutput)
+
+
+def test_saver_picks_best_rating_and_writes_final_and_report(tmp_path):
+    iter1 = tmp_path / "iter_1.png"
+    iter2 = tmp_path / "iter_2.png"
+    iter1.write_bytes(b"img1")
+    iter2.write_bytes(b"img2")
+
+    history = [
+        {
+            "iteration": 1,
+            "prompt": "First prompt",
+            "image_path": str(iter1),
+            "rating": 5,
+            "critique": "Too cluttered.",
+        },
+        {
+            "iteration": 2,
+            "prompt": "Revised prompt",
+            "image_path": str(iter2),
+            "rating": 8,
+            "critique": "Great clarity now.",
+        },
+    ]
+
+    from thumbnail_agent.nodes import saver
+    state = _base_state(
+        topic="Python AI",
+        output_dir=str(tmp_path),
+        history=history,
+    )
+    saver(state)
+
+    final = tmp_path / "final.png"
+    assert final.exists()
+    assert final.read_bytes() == b"img2"
+
+    report = tmp_path / "report.md"
+    assert report.exists()
+    content = report.read_text()
+    assert "First prompt" in content
+    assert "Revised prompt" in content
+    assert "5/10" in content
+    assert "8/10" in content
+    assert "Too cluttered" in content
